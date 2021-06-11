@@ -10,25 +10,32 @@ import ListPage from "./components/ListPage"
 const App = (props) => {
   const [query, setQuery] = useState("")
   const [products, setProducts] = useState([])
+  const [total, setTotal] = useState("")
+  const [offset, setOffset] = useState(0)
+  const [filters, setFilter] = useState([])
 
-
-  useEffect( async () => {
-     try {
-        const api = process.env.REACT_APP_BE_URL
-        const res = await fetch(api + `/products${props.location.search}`)
-        if(!res.ok) throw new Error("ProductFetch failed")
-        let data = await res.json()
-        setProducts(data.products)
-     } catch (error) {
-        console.log(error)
-     }
-  },[query, props])
+  useEffect(() => {
+    const get =  async() =>{
+      try {
+         const api = process.env.REACT_APP_BE_URL
+         const res = await fetch(api + `/products?skip=${offset}&limit=4${props.location.search?`&${props.location.search.slice(1)}`:''}`)
+         if(!res.ok) throw new Error("ProductFetch failed")
+         let data = await res.json()
+         setProducts(data.products)
+         setTotal(data.total)
+         setFilter([data.brands, data.categories])
+      } catch (error) {
+         console.log(error)
+      }
+    }
+    get()
+  },[query,offset, props])
 
 
   return (
   <>
       <Header onQueryChange={(query) => setQuery(query)} searchWord={query}/>
-      <Route path="/" render={(state)=> <ListPage products={products}/>} />
+      <Route path="/products" render={(state)=> <ListPage products={products} total={total} onOffsetChange={setOffset} filters={filters}/>} />
       <Route path="/product/:id" component={ProductPage} />
       <Route
         path="/addProduct"

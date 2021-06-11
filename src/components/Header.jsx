@@ -27,7 +27,7 @@ function Header(props) {
     if (
       !props.location.search.startsWith("?query") &&
       !props.location.search.includes("query")
-     ) {
+    ) {
       console.log("Tes");
       setSearch(props.location.search);
     }
@@ -35,10 +35,11 @@ function Header(props) {
 
   return (
     <div className='header'>
-      <Link to='/'>
+      <Link to='/products'>
         <img
           className='header__logo'
           src='http://pngimg.com/uploads/amazon/amazon_PNG11.png'
+          alt='logo'
         />
       </Link>
 
